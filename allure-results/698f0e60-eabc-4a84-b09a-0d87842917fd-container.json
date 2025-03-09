@@ -1,0 +1,1 @@
+{"uuid":"698f0e60-eabc-4a84-b09a-0d87842917fd","name":"Partial User Test","children":["6f4388ef-76fa-4d7f-98b6-11035634e480"],"befores":[{"name":"setUp","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1741483022257,"stop":1741483022258}],"afters":[],"start":1741483022256,"stop":1741483023964}

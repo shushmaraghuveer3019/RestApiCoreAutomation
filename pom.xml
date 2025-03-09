@@ -2,12 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
-    <artifactId>RestAssuredCoreProject</artifactId>
+    <groupId>APIFrameworkSeries</groupId>
+    <artifactId>APIFrameworkSeries</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>RestAssuredCoreProject</name>
+    <name>APIFrameworkSeries</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -20,6 +20,12 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
+            <version>5.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
             <version>5.5.0</version>
         </dependency>
 
@@ -73,5 +79,18 @@
             <artifactId>allure-rest-assured</artifactId>
             <version>2.29.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>5.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>2.29.1</version>
+        </dependency>
+
     </dependencies>
 </project>

@@ -1,0 +1,1 @@
+{"uuid":"bad2f94b-d4e8-42bd-8055-b6c8b290de59","name":"RestApiCoreFramework","children":["099c7d2a-0bb2-40a4-bd45-1256c431065b"],"befores":[{"name":"setUp","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1741486658639,"stop":1741486658860}],"afters":[],"start":1741486658632,"stop":1741486658988}
