@@ -7,6 +7,7 @@ import com.qa.api.utils.StringUtility;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -15,27 +16,37 @@ import static com.qa.api.utils.StringUtility.getRandomEmailId;
 
 public class CreateUserTest extends BaseTest {
 
-    @Test
-    public void createUserTest() {
-        User user = new User(null, "raghu", StringUtility.getRandomEmailId(), "Male", "active");
+    @DataProvider
+    public Object[][] getUserData() {
+        return new Object[][]{
+                {"raghu", "male", "active"},
+                {"abhi", "male", "inactive"},
+                {"naveen", "male", "active"},
+                {"shru", "female", "active"}
+        };
+    }
 
-        Response getResponse = restClient.posApiCall(BASE_URL_GOREST,"/public/v2/users", user, null, null, AuthType.BEARER_TOKEN, ContentType.JSON);
+    @Test(dataProvider = "getUserData")
+    public void createUserTest(String name, String gender, String status) {
+        User user = new User(null, name, StringUtility.getRandomEmailId(), gender, status);
+
+        Response getResponse = restClient.posApiCall(BASE_URL_GOREST, "/public/v2/users", user, null, null, AuthType.BEARER_TOKEN, ContentType.JSON);
         Assert.assertEquals(getResponse.getStatusCode(), 201);
     }
 
-    @Test
-    public void createUserWithBuilderTest() {
+    @Test(dataProvider = "getUserData")
+    public void createUserWithBuilderTest(String name, String gender, String status) {
 
         //POST - Create the USER
-        User user = User.builder().name("apiname").email(StringUtility.getRandomEmailId()).status("active").gender("male").build();
+        User user = User.builder().name(name).email(StringUtility.getRandomEmailId()).status(status).gender(gender).build();
 
-        Response postResponse = restClient.posApiCall(BASE_URL_GOREST,"/public/v2/users", user, null, null, AuthType.BEARER_TOKEN, ContentType.JSON);
+        Response postResponse = restClient.posApiCall(BASE_URL_GOREST, "/public/v2/users", user, null, null, AuthType.BEARER_TOKEN, ContentType.JSON);
         Assert.assertEquals(postResponse.getStatusCode(), 201);
         String userId = postResponse.jsonPath().getString("id");
         System.out.println("User Id " + userId);
 
         //GET - Fetch the created user
-        Response getResponse = restClient.getApiCall(BASE_URL_GOREST,"/public/v2/users/" + userId, null, null, AuthType.BEARER_TOKEN, ContentType.JSON);
+        Response getResponse = restClient.getApiCall(BASE_URL_GOREST, "/public/v2/users/" + userId, null, null, AuthType.BEARER_TOKEN, ContentType.JSON);
         Assert.assertEquals(getResponse.getStatusCode(), 200);
         Assert.assertEquals(getResponse.jsonPath().getString("id"), userId);
         Assert.assertEquals(getResponse.jsonPath().getString("name"), user.getName());
@@ -47,7 +58,7 @@ public class CreateUserTest extends BaseTest {
     @Test(enabled = false)
     public void createUserWithJsonFileTest() {
         File userFileJson = new File("./src/test/resources/jsons/user.json");
-        Response getResponse = restClient.posApiCall(BASE_URL_GOREST,"/public/v2/users", userFileJson, null, null, AuthType.BEARER_TOKEN, ContentType.JSON);
+        Response getResponse = restClient.posApiCall(BASE_URL_GOREST, "/public/v2/users", userFileJson, null, null, AuthType.BEARER_TOKEN, ContentType.JSON);
         Assert.assertEquals(getResponse.getStatusCode(), 201);
     }
 

@@ -1,8 +1,12 @@
 package com.qa.api.base;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.qa.api.client.RestClient;
+import com.qa.api.mocking.WireMockSetup;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 
 
@@ -14,6 +18,7 @@ public class BaseTest {
     protected final static String BASE_URL_CONTACTS = "https://thinking-tester-contact-list.herokuapp.com";
     protected final static String BASE_URL_HERO_BASIC = "https://the-internet.herokuapp.com";
     protected final static String BASE_URL_AMADEUS = "https://test.api.amadeus.com";
+    protected final static String BASE_URL_LOCALHOST_PORT = "http:localhost:8089";
 
     // ***********AppEndpoints**************
     protected static final String GOREST_USERS_ALL_ENDPOINT = "/public/v2/users";
@@ -24,13 +29,25 @@ public class BaseTest {
     protected static final String FAKESTORE_USERS_ALL_ENDPOINT = "/users";
     protected static final String CONTACTS_USER_LOGIN_ENDPOINT = "/users/login";
     protected static final String CONTACTS_ALL_ENDPOINT = "/contacts";
+    protected final static String BASE_URL_LOCALHOST_ENDPOINT = "/api/users";
 
     protected RestClient restClient;
 
 
-    @BeforeTest
-    public void setUp() {
+    @BeforeSuite
+    public void setUpReport() {
         RestAssured.filters(new AllureRestAssured());
         restClient = new RestClient();
+    }
+
+    @BeforeTest
+    public void setupMock(){
+        restClient =   new RestClient();
+        WireMockSetup.createWireMockServer();
+    }
+
+    @AfterTest
+    public void stopMockServer(){
+        WireMockSetup.stopWireMockServer();
     }
 }
