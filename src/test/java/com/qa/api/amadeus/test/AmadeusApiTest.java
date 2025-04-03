@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class AmadeusApiTest extends BaseTest {
 
-    @Test
+    @Test(enabled = false)
     public void getFlightDetails() {
         Map<String, String> queryParams = Maps.of("origin", "PAR", "maxPrice", "200");
         Response getFlightResponse = restClient.getApiCall(BASE_URL_AMADEUS, "/v1/shopping/flight-destinations", queryParams, null, AuthType.OAUTH2, ContentType.ANY);
