@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven_Home'
+        maven 'Maven_Home'  // Ensure Maven_Home is configured in Jenkins
     }
 
     environment {
-        SANITY_TESTS_RAN = false
+        SANITY_TESTS_RAN = 'false'
     }
 
     stages {
@@ -30,51 +30,20 @@ pipeline {
 
         stage("Deploy to Dev") {
             when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                expression { !currentBuild.result || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                echo "deploy to Dev"
-            }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
-            }
-        }
-
-        stage("Deploy to QA") {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
-            steps {
-                echo "deploy to qa"
-            }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
+                echo "Deploying to Dev..."
             }
         }
 
         stage('Run Regression Automation Tests') {
             when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                expression { !currentBuild.result || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    git 'https://github.com/shushmaraghuveer3019/RestApiCoreAutomation.git'
+                catchError(buildResult: 'SUCCESS') {
                     sh "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/testng_regression.xml"
-                }
-            }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
                 }
             }
         }
@@ -87,7 +56,7 @@ pipeline {
                         jdk: '',
                         properties: [],
                         reportBuildPolicy: 'ALWAYS',
-                        results: [[path: '/allure-results']]
+                        results: [[path: 'allure-results']]
                     ])
                 }
             }
@@ -100,24 +69,16 @@ pipeline {
                     keepAll: true,
                     reportDir: 'reports',
                     reportFiles: 'TestExecutionReport.html',
-                    reportName: 'HTML Regression Extent Report',
-                    reportTitles: ''])
+                    reportName: 'HTML Regression Extent Report'])
             }
         }
 
         stage("Deploy to Stage") {
             when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                expression { !currentBuild.result || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                echo "deploy to Stage"
-            }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
+                echo "Deploying to Stage..."
             }
         }
 
@@ -126,23 +87,16 @@ pipeline {
                 expression { !currentBuild.result || currentBuild.result == 'SUCCESS' }
             }
             steps {
-               catchError(buildResult: 'SUCCESS') {
+                catchError(buildResult: 'SUCCESS') {
                     sh "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/testng_sanity.xml"
                 }
                 script {
                     env.SANITY_TESTS_RAN = 'true'
                 }
             }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
-            }
         }
 
-        stage('Publish sanity Extent Report') {
+        stage('Publish Sanity Extent Report') {
             when {
                 expression { env.SANITY_TESTS_RAN == 'true' }
             }
@@ -152,11 +106,8 @@ pipeline {
                     keepAll: true,
                     reportDir: 'reports',
                     reportFiles: 'TestExecutionReport.html',
-                    reportName: 'HTML Sanity Extent Report',
-                    reportTitles: ''])
+                    reportName: 'HTML Sanity Extent Report'])
             }
         }
     }
-
-
 }
