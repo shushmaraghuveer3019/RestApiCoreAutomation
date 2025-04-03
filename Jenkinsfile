@@ -67,7 +67,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     git 'https://github.com/shushmaraghuveer3019/RestApiCoreAutomation.git'
-                    sh "mvn clean test -Dsurefire.suiteXmlFile=src/test/resources/testrunners/testng_regression.xml"
+                    sh "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/testng_regression.xml"
                 }
             }
             post {
@@ -123,15 +123,14 @@ pipeline {
 
         stage('Run Sanity Automation Tests') {
             when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                expression { !currentBuild.result || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    git 'https://github.com/shushmaraghuveer3019/RestApiCoreAutomation.git'
-                    sh "mvn clean test -Dsurefire.suiteXmlFile=src/test/resources/testrunners/testng_sanity.xml"
+               catchError(buildResult: 'SUCCESS') {
+                    sh "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/testng_sanity.xml"
                 }
                 script {
-                    env.SANITY_TESTS_RAN = true
+                    env.SANITY_TESTS_RAN = 'true'
                 }
             }
             post {
