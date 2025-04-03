@@ -10,6 +10,14 @@ pipeline {
     }
 
     stages {
+            stage('Checkout Repository') {
+                steps {
+                    git branch: 'main', url: 'https://github.com/shushmaraghuveer3019/RestApiCoreAutomation.git'
+                }
+            }
+        }
+
+    stages {
         stage('Build') {
             steps {
                 git 'https://github.com/jglick/simple-maven-project-with-tests.git'
@@ -64,14 +72,22 @@ pipeline {
 
         stage('Publish Extent Report') {
             steps {
-                publishHTML([allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'reports',
-                    reportFiles: 'TestExecutionReport.html',
-                    reportName: 'HTML Regression Extent Report'])
+                script {
+                    def reportDir = "reports"
+                    if (fileExists(reportDir)) {
+                        publishHTML([allowMissing: false,
+                            alwaysLinkToLastBuild: false,
+                            keepAll: true,
+                            reportDir: reportDir,
+                            reportFiles: 'TestExecutionReport.html',
+                            reportName: 'HTML Regression Extent Report'])
+                    } else {
+                        echo "WARNING: Report directory '${reportDir}' does not exist. Skipping report publishing."
+                    }
+                }
             }
         }
+
 
         stage("Deploy to Stage") {
             when {
