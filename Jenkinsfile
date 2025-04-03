@@ -10,14 +10,13 @@ pipeline {
     }
 
     stages {
-            stage('Checkout Repository') {
+
+     stage('Checkout Repository') {
                 steps {
                     git branch: 'main', url: 'https://github.com/shushmaraghuveer3019/RestApiCoreAutomation.git'
                 }
             }
-        }
 
-    stages {
         stage('Build') {
             steps {
                 git 'https://github.com/jglick/simple-maven-project-with-tests.git'
