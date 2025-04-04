@@ -18,5 +18,6 @@ public class MockDeleteUserAPITest extends BaseTest {
         response.then()
                 .assertThat()
                 .statusCode(204);
+        //get dummy json
     }
 }
